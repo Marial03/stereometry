@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Стереометрия 3D — Конструктор и тренажёр построения сечений (ЕГЭ)</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ УПРАВЛЕНИЯ -->
+  <header class="app-header">
+    <div class="brand-block">
+      <div class="brand-icon">3D</div>
+      <div>
+        <div class="brand-title">Стереометрия 3D • Построение сечений</div>
+        <div class="brand-subtitle">Интерактивный конструктор и тренажёр (Школа / ЕГЭ №14)</div>
+      </div>
+    </div>
+
+    <!-- Переключатель 3 режимов работы на уроке -->
+    <div class="mode-tabs">
+      <button class="mode-tab-btn active" data-mode="explain" title="Пошаговое построение с объяснением правил и теорем">
+        📖 Пошаговое объяснение
+      </button>
+      <button class="mode-tab-btn" data-mode="trainer" title="Самостоятельное построение с подсказками и проверкой ошибок">
+        ✏️ Тренажёр (Построй сам)
+      </button>
+      <button class="mode-tab-btn" data-mode="notebook" title="Фигура закреплена, проверка отключена — ученик чертит как в тетради">
+        📓 Как в тетради (Контроль)
+      </button>
+    </div>
+
+    <!-- Настройки вида, блокировки фигуры, маркера и экспорта -->
+    <div class="header-controls">
+      <button id="lockCameraBtn" class="btn" title="Закрепить ракурс фигуры, чтобы она не вращалась при черчении">
+        🔓 Закрепить фигуру
+      </button>
+
+      <button id="toggleMarkerBtn" class="btn" title="Рисовать маркером/указкой поверх 3D-чертежа во время объяснения">
+        🖍 Маркер
+      </button>
+
+      <button id="toggleMarkerPaletteBtn" class="btn" style="display: none;" title="Показать или скрыть выбор цвета маркера">
+        🎨 Цвет ▾
+      </button>
+
+      <button id="markerEraserBtn" class="btn" style="display: none;" title="Ластик маркера: кликните или проведите по штриху маркера, чтобы стереть его">
+        🧽 Ластик маркера
+      </button>
+
+      <button id="clearMarkerBtn" class="btn" style="display: none;" title="Очистить сразу все пометки маркера">
+        🗑 Стереть всё
+      </button>
+
+      <button id="toggleAuxPlanesBtn" class="btn" title="Скрыть или показать вспомогательную проектирующую плоскость, чтобы она не мешалась">
+        👁 Вспом. плоскость: Видна
+      </button>
+
+      <button id="toggleProjectionBtn" class="btn" title="Переключить между параллельной проекцией (как в учебнике) и перспективой">
+        📐 Проекция: Учебник (Орто)
+      </button>
+
+      <button id="toggleRatioLabelsBtn" class="btn" title="Показать или скрыть доли/координаты точек (1:1, 1:2) рядом с буквами на 3D-чертеже">
+        🏷 Доли точек: Скрыты
+      </button>
+
+      <button id="toggleSidebarsBtn" class="btn" title="Скрыть или показать боковые панели, чтобы освободить место для чертежа">
+        ⛶ Широкий чертёж
+      </button>
+
+      <select id="figureStyleSelect" class="select-compact" title="Режим отображения граней фигуры">
+        <option value="shaded">Вид: Полупрозрачные грани</option>
+        <option value="wireframe">Вид: Чисто рёбрами (Тетрадь)</option>
+        <option value="solid">Вид: Плотная заливка</option>
+      </select>
+
+      <select id="sectionFillSelect" class="select-compact" title="Стиль заливки построенного сечения">
+        <option value="both">Сечение: Цвет + штриховка</option>
+        <option value="hatch">Сечение: Штриховка (тетрадь)</option>
+        <option value="color">Сечение: Заливка цветом</option>
+        <option value="none">Сечение: Только контур</option>
+      </select>
+
+      <button id="toggleThemeBtn" class="btn" title="Светлая или тёмная тема">
+        🌙 Тёмная (Доска)
+      </button>
+
+      <button id="copyClipboardBtn" class="btn" title="Скопировать чертёж в буфер обмена для вставки на онлайн-доску">
+        📋 В буфер
+      </button>
+
+      <button id="exportPngBtn" class="btn btn-primary" title="Скачать чертёж в формате PNG">
+        💾 Скачать PNG
+      </button>
+    </div>
+  </header>
+
+  <!-- ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ -->
+  <main class="app-workspace">
+
+    <!-- ЛЕВАЯ КОЛОНКА: Выборы шаблонов, фигуры, продления граней и начальных точек -->
+    <aside class="sidebar sidebar-left">
+
+      <!-- 1. Готовая коллекция типовых задач -->
+      <div class="card">
+        <div class="card-title">
+          <span>📚 Готовые задачи и шаблоны</span>
+        </div>
+        <div class="form-row">
+          <select id="presetSelect" class="form-select"></select>
+        </div>
+      </div>
+
+      <!-- 2. Выбор объёмной фигуры и настройка размеров -->
+      <div class="card">
+        <div class="card-title">
+          <span>🧊 Объёмная фигура и размеры</span>
+        </div>
+        <div class="form-row">
+          <label for="solidSelect">Шаблон фигуры:</label>
+          <select id="solidSelect" class="form-select"></select>
+        </div>
+
+        <div id="customNRow" class="slider-inline" style="display: none;">
+          <span>Углов в осн. (n):</span>
+          <input id="customNSlider" type="range" min="3" max="8" step="1" value="5" />
+        </div>
+
+        <div class="slider-inline">
+          <span>Ширина / радиус:</span>
+          <input id="scaleWSlider" type="range" min="0.6" max="1.45" step="0.05" value="1.0" />
+        </div>
+
+        <div class="slider-inline">
+          <span>Высота фигуры H:</span>
+          <input id="scaleHSlider" type="range" min="0.6" max="1.5" step="0.05" value="1.0" />
+        </div>
+
+        <div class="slider-inline">
+          <span>Наклон / сдвиг S:</span>
+          <input id="tiltXSlider" type="range" min="-1.2" max="1.2" step="0.05" value="0.0" />
+        </div>
+      </div>
+
+      <!-- 3A. Задание сечения для многогранников + продление плоскостей граней -->
+      <div id="polyhedronControls" class="card">
+        <div class="card-title">
+          <span>▱ Продлить плоскость грани и её рёбра</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">
+          Нажмите на грань ниже, чтобы визуально расширить её плоскость за пределы фигуры (для наглядности метода следов):
+        </div>
+        <div id="extendFacesChipsContainer" class="face-chips-wrap" style="margin-bottom: 10px;"></div>
+
+        <div class="card-title" style="margin-top: 6px;">
+          <span>📍 Задание точек и плоскости</span>
+          <button id="togglePointsBlockBtn" class="pick-slot-btn" title="Свернуть или развернуть настройки координат/положения точек M, N, K">
+            Скрыть точки ▲
+          </button>
+        </div>
+
+        <div id="pointsBlockContent">
+        <div class="form-row">
+          <label for="specModeSelect">Способ задания сечения:</label>
+          <select id="specModeSelect" class="form-select">
+            <option value="points3">По трём точкам (M, N, K)</option>
+            <option value="pointLine">Через точку M и прямую NK</option>
+            <option value="parallelLine">Через точки M, N параллельно ребру</option>
+            <option value="parallelFace">Через точку M параллельно грани</option>
+          </select>
+        </div>
+
+        <div id="parallelEdgeRow" class="form-row" style="display: none;">
+          <label for="parallelEdgeSelect">Параллельно какому ребру:</label>
+          <select id="parallelEdgeSelect" class="form-select"></select>
+        </div>
+
+        <div id="parallelFaceRow" class="form-row" style="display: none;">
+          <label for="parallelFaceSelect">Параллельно какой грани:</label>
+          <select id="parallelFaceSelect" class="form-select"></select>
+        </div>
+
+        <div class="form-row">
+          <label for="strategySelect">Приоритетный метод построения:</label>
+          <select id="strategySelect" class="form-select">
+            <option value="auto">Автоматический (оптимальный разбор)</option>
+            <option value="traces">Метод следов (продление прямых)</option>
+            <option value="parallel">Параллельный перенос (паралл. грани)</option>
+            <option value="projection">Внутреннее проектирование (диагонали)</option>
+          </select>
+        </div>
+
+        <!-- Карточка точки M -->
+        <div id="pointCard_M" class="point-card">
+          <div class="point-card-header">
+            <span class="point-badge">● Точка M</span>
+            <span id="ratioBadge_M" class="ratio-pill">1 : 1 (середина)</span>
+            <button id="pickSlotBtn_M" class="pick-slot-btn active" title="Кликните по любому ребру на 3D-фигуре, чтобы поставить туда точку M">
+              🎯 На чертеже
+            </button>
+          </div>
+          <select id="edgeSelect_M" class="form-select" style="margin-bottom: 5px;"></select>
+          <input id="ratioSlider_M" type="range" min="0" max="1" step="0.01" value="0.5" style="width: 100%;" />
+          <div class="quick-ratios">
+            <button class="quick-ratio-btn" data-pt="M" data-t="0.5">1:1 (сер.)</button>
+            <button class="quick-ratio-btn" data-pt="M" data-t="0.3333">1:2</button>
+            <button class="quick-ratio-btn" data-pt="M" data-t="0.6667">2:1</button>
+            <button class="quick-ratio-btn" data-pt="M" data-t="0.25">1:3</button>
+            <button class="quick-ratio-btn" data-pt="M" data-t="0.75">3:1</button>
+          </div>
+        </div>
+
+        <!-- Карточка точки N -->
+        <div id="pointCard_N" class="point-card">
+          <div class="point-card-header">
+            <span class="point-badge">● Точка N</span>
+            <span id="ratioBadge_N" class="ratio-pill">1 : 1 (середина)</span>
+            <button id="pickSlotBtn_N" class="pick-slot-btn" title="Кликните по любому ребру на 3D-фигуре, чтобы поставить туда точку N">
+              🎯 На чертеже
+            </button>
+          </div>
+          <select id="edgeSelect_N" class="form-select" style="margin-bottom: 5px;"></select>
+          <input id="ratioSlider_N" type="range" min="0" max="1" step="0.01" value="0.5" style="width: 100%;" />
+          <div class="quick-ratios">
+            <button class="quick-ratio-btn" data-pt="N" data-t="0.5">1:1 (сер.)</button>
+            <button class="quick-ratio-btn" data-pt="N" data-t="0.3333">1:2</button>
+            <button class="quick-ratio-btn" data-pt="N" data-t="0.6667">2:1</button>
+            <button class="quick-ratio-btn" data-pt="N" data-t="0.25">1:3</button>
+            <button class="quick-ratio-btn" data-pt="N" data-t="0.75">3:1</button>
+          </div>
+        </div>
+
+        <!-- Карточка точки K -->
+        <div id="pointCard_K" class="point-card">
+          <div class="point-card-header">
+            <span class="point-badge">● Точка K</span>
+            <span id="ratioBadge_K" class="ratio-pill">1 : 1 (середина)</span>
+            <button id="pickSlotBtn_K" class="pick-slot-btn" title="Кликните по любому ребру на 3D-фигуре, чтобы поставить туда точку K">
+              🎯 На чертеже
+            </button>
+          </div>
+          <select id="edgeSelect_K" class="form-select" style="margin-bottom: 5px;"></select>
+          <input id="ratioSlider_K" type="range" min="0" max="1" step="0.01" value="0.5" style="width: 100%;" />
+          <div class="quick-ratios">
+            <button class="quick-ratio-btn" data-pt="K" data-t="0.5">1:1 (сер.)</button>
+            <button class="quick-ratio-btn" data-pt="K" data-t="0.3333">1:2</button>
+            <button class="quick-ratio-btn" data-pt="K" data-t="0.6667">2:1</button>
+            <button class="quick-ratio-btn" data-pt="K" data-t="0.25">1:3</button>
+            <button class="quick-ratio-btn" data-pt="K" data-t="0.75">3:1</button>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- 3B. Управление сечением для тел вращения -->
+      <div id="revolutionControls" class="card" style="display: none;">
+        <div class="card-title">
+          <span>🔄 Сечение тела вращения</span>
+        </div>
+        <div class="form-row">
+          <label for="revModeSelect">Положение секущей плоскости:</label>
+          <select id="revModeSelect" class="form-select">
+            <option value="parallelAxis">Параллельно оси / Через вершину по хорде</option>
+            <option value="axial">Осевое сечение (через центр O)</option>
+            <option value="parallelBase">Параллельно основанию (круг)</option>
+            <option value="inclined">Наклонное сечение (эллипс)</option>
+          </select>
+        </div>
+
+        <div class="slider-inline">
+          <span>Расстояние d от O:</span>
+          <input id="revOffsetDSlider" type="range" min="0.0" max="0.85" step="0.02" value="0.45" />
+        </div>
+
+        <div class="slider-inline">
+          <span>Угол наклона φ:</span>
+          <input id="revTiltSlider" type="range" min="5" max="45" step="1" value="25" />
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ЦЕНТРАЛЬНАЯ ОБЛАСТЬ: 3D-ХОЛСТ + ПАНЕЛЬ ШАГОВ / ТРЕНАЖЁРА -->
+    <section class="viewport-center">
+
+      <!-- Плавающие кнопки быстрых ракурсов камеры -->
+      <div class="viewport-top-bar">
+        <div class="cam-presets-group">
+          <button class="cam-preset-btn" data-cam="isometric">Учебник (3D)</button>
+          <button class="cam-preset-btn" data-cam="front">Спереди</button>
+          <button class="cam-preset-btn" data-cam="top">Сверху</button>
+          <button class="cam-preset-btn" data-cam="side">Сбоку</button>
+          <button class="cam-preset-btn" data-cam="fitAll" title="Отдалить камеру, чтобы увидеть далёкие точки-следы E₁, E₂">
+            🔍 Вписать со следами
+          </button>
+          <button id="toggleMouseHintBtn" class="cam-preset-btn" title="Показать или скрыть памятку по управлению мышью и клавишами">
+            ❓ Управление
+          </button>
+        </div>
+
+        <div id="mouseHintPill" class="mouse-hint-pill" style="display: none; pointer-events: auto;">
+          <span>ЛКМ — вращать • Колёсико — зум • Esc / ПКМ — отменить выбор • Ctrl+Z — назад</span>
+          <button id="closeMouseHintBtn" style="border:none; background:transparent; cursor:pointer; margin-left:6px; font-weight:700; color:var(--text-muted);">✕</button>
+        </div>
+
+        <!-- Скрываемая палитра выбора цвета маркера -->
+        <div id="markerPaletteBar" class="cam-presets-group" style="display: none; align-items: center; gap: 6px; padding: 5px 10px;">
+          <span style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary);">Цвет маркера:</span>
+          <button class="marker-color-swatch active" data-color="#f59e0b" style="background: #f59e0b;" title="Оранжевый"></button>
+          <button class="marker-color-swatch" data-color="#ef4444" style="background: #ef4444;" title="Красный"></button>
+          <button class="marker-color-swatch" data-color="#2563eb" style="background: #2563eb;" title="Синий"></button>
+          <button class="marker-color-swatch" data-color="#10b981" style="background: #10b981;" title="Зелёный"></button>
+          <button class="marker-color-swatch" data-color="#8b5cf6" style="background: #8b5cf6;" title="Фиолетовый"></button>
+          <button class="marker-color-swatch" data-color="#0f172a" style="background: #0f172a;" title="Чёрный"></button>
+          <input id="markerCustomColorInput" type="color" value="#f59e0b" title="Выбрать любой свой цвет" style="width: 24px; height: 22px; border: none; background: transparent; cursor: pointer;" />
+          <button id="closeMarkerPaletteBtn" class="cam-preset-btn" title="Скрыть палитру цветов">Скрыть ▲</button>
+        </div>
+      </div>
+
+      <!-- 3D Canvas -->
+      <div class="canvas-3d-wrapper">
+        <canvas id="canvas3d"></canvas>
+      </div>
+
+      <!-- Панель 1: Пошаговое объяснение построения -->
+      <div id="explainStepPanel" class="bottom-control-panel">
+        <div class="step-controls-row">
+          <div class="step-badges">
+            <span id="stepCounterBadge" class="badge badge-counter">Шаг 1 из 5</span>
+            <span id="stepCategoryBadge" class="badge badge-category">Дано</span>
+          </div>
+
+          <div class="step-nav-buttons">
+            <button id="stepFirstBtn" class="btn" title="К начальному условию (Шаг 1)">⏮ В начало</button>
+            <button id="stepPrevBtn" class="btn" title="Предыдущий шаг">◀ Шаг назад</button>
+            <button id="stepNextBtn" class="btn btn-primary" title="Следующий шаг построения">Следующий шаг ▶</button>
+            <button id="stepLastBtn" class="btn" title="Показать готовое сечение целиком">⏭ Всё сечение</button>
+            <button id="stepAutoPlayBtn" class="btn" title="Автоматическая анимация по шагам">▶ Авто-показ</button>
+            <button id="toggleExplainTextBtn" class="btn" title="Свернуть или развернуть текстовое объяснение шага">▼ Скрыть текст</button>
+          </div>
+        </div>
+
+        <div id="stepContentBox" class="step-content-box">
+          <div id="stepTitleText" class="step-title">Исходные данные</div>
+          <div id="stepExplanationText" class="step-explanation">Описание текущего шага построения...</div>
+          <div id="stepRuleFormulaText" class="step-rule-formula">📐 Правило стереометрии</div>
+        </div>
+      </div>
+
+      <!-- Панель 2: Инструменты ручного построения (Тренажёр / Как в тетради) -->
+      <div id="trainerToolPanel" class="bottom-control-panel" style="display: none;">
+        <div class="trainer-tools-row">
+          <div class="trainer-tool-group">
+            <button class="trainer-tool-btn active" data-tool="segment" title="Соединить две точки, лежащие в одной грани (Аксиома плоскости)">
+              📏 Отрезок сечения
+            </button>
+            <button class="trainer-tool-btn" data-tool="extendLine" title="Кликните по ребру, чтобы продлить его за пределы фигуры, или по двум точкам, чтобы продлить прямую">
+              ↔ Продлить ребро / прямую
+            </button>
+            <button class="trainer-tool-btn" data-tool="extendFace" title="Кликните по грани на 3D-фигуре, чтобы визуально расширить саму плоскость грани">
+              ▱ Продлить грань
+            </button>
+            <button class="trainer-tool-btn" data-tool="intersect" title="Кликните по двум прямым (или ребру и прямой), чтобы поставить точку их пересечения (проверяет скрещивающиеся прямые!)">
+              ✕ Пересечение прямых
+            </button>
+            <button class="trainer-tool-btn" data-tool="parallel" title="3 шага: 1. Выбрать прямую-образец -> 2. Выбрать точку -> 3. Выбрать плоскость (грань), куда идёт перенос">
+              ∥ Параллельный перенос
+            </button>
+            <button class="trainer-tool-btn" data-tool="auxPlane" title="Опустить ортогональные проекции двух точек на основание и провести через две параллельные прямые вспомогательную плоскость">
+              ◫ Вспом. плоскость (проекции)
+            </button>
+            <button class="trainer-tool-btn" data-tool="auxLine" title="Провести диагональ основания (AC, BD), высоту SO или вспомогательную прямую для внутреннего проектирования">
+              ┄ Диагональ / Вспом.
+            </button>
+            <button class="trainer-tool-btn" data-tool="eraser" title="Удалить конкретную проведённую линию кликом по ней">
+              🧽 Ластик
+            </button>
+            <button class="trainer-tool-btn" data-tool="movePoint" title="Перемещать исходные точки M, N, K по рёбрам">
+              ✋ Двигать M, N, K
+            </button>
+          </div>
+
+          <div class="trainer-tool-group" style="align-items: center;">
+            <button id="cancelSelectionBtn" class="btn btn-cancel-esc" style="display: none;" title="Отменить выбранную точку или прямую (горячая клавиша Esc)">
+              ✖ Отмена выбора (Esc)
+            </button>
+
+            <label style="display: flex; align-items: center; gap: 5px; font-weight: 600; cursor: pointer; margin-right: 4px;">
+              <input id="liveErrorCheckToggle" type="checkbox" checked />
+              <span>Проверять ошибки сразу</span>
+            </label>
+            <button id="trainerHintBtn" class="btn" title="Подсказать следующий шаг построения">💡 Подсказка</button>
+            <button id="trainerVerifyBtn" class="btn btn-primary" title="Проверить правильность всех проведённых линий">✅ Проверить чертёж</button>
+            <button id="trainerUndoBtn" class="btn" title="Отменить последнее действие (Ctrl+Z)">↩ Назад (Ctrl+Z)</button>
+            <button id="trainerResetBtn" class="btn" title="Очистить ручное построение и начать заново">🔄 Сброс</button>
+            <button id="toggleTrainerTextBtn" class="btn" title="Скрыть или показать строку подсказки снизу">▼ Скрыть подсказку</button>
+          </div>
+        </div>
+
+        <!-- Всплывающая панель выбора плоскости (грани) на Шаге 3 параллельного переноса -->
+        <div id="parallelFacePickerBar" class="parallel-face-picker-bar" style="display: none;"></div>
+
+        <div id="trainerFeedbackBox" class="trainer-feedback feedback-info">
+          Выберите инструмент и кликайте по точкам или рёбрам на 3D-фигуре (нажмите Esc для отмены выбранной точки).
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ПРАВАЯ КОЛОНКА: 2D НАТУРАЛЬНАЯ ВЕЛИЧИНА / ВЫНОС ГРАНИ, ХАРАКТЕРИСТИКИ И ШАГИ -->
+    <aside class="sidebar sidebar-right">
+
+      <!-- 1. 2D-окно: Натуральная величина сечения ИЛИ Вынос отдельной грани со следами -->
+      <div class="card">
+        <div class="tabs-2d-bar">
+          <button class="tab-2d-btn active" data-view2d="section" title="Показать само сечение в натуральную величину">
+            📐 Сечение в 2D
+          </button>
+          <button class="tab-2d-btn" data-view2d="face" title="Показать выбранную грань и её продолжения со следами плоско в 2D">
+            🔍 Вынос грани в 2D
+          </button>
+        </div>
+
+        <div id="select2DFaceRow" class="form-row" style="display: none; margin-bottom: 6px;">
+          <select id="select2DFace" class="form-select"></select>
+        </div>
+
+        <div class="canvas-2d-wrapper">
+          <canvas id="canvas2d"></canvas>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-box full">
+            <div class="metric-label">Тип многоугольника сечения:</div>
+            <div id="metricShapeName" class="metric-value">—</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Площадь S:</div>
+            <div id="metricArea" class="metric-value">—</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Периметр P:</div>
+            <div id="metricPerimeter" class="metric-value">—</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Вершины:</div>
+            <div id="metricVerticesCount" class="metric-value">—</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Угол к основанию φ:</div>
+            <div id="metricDihedralAngle" class="metric-value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Полный список шагов построения -->
+      <div class="card">
+        <div class="card-title">
+          <span>📋 План построения по шагам</span>
+        </div>
+        <div id="stepsTimelineList" class="timeline-list"></div>
+      </div>
+
+      <!-- 3. Памятка основных правил для ученика -->
+      <div class="card">
+        <div class="card-title">
+          <span>📌 Главные правила построения</span>
+        </div>
+        <div class="rules-cheatsheet">
+          <div class="rule-mini-item">
+            <strong>1. Точки в одной грани (Аксиома A₂)</strong>
+            Соединять отрезком можно ТОЛЬКО точки, лежащие в одной плоскости (в одной грани многогранника).
+          </div>
+          <div class="rule-mini-item">
+            <strong>2. Метод следов (Продление прямых и граней)</strong>
+            Прямую сечения и ребро из ТОЙ ЖЕ грани можно продлить до пересечения в точке-следе E, принадлежащей и смежной грани.
+          </div>
+          <div class="rule-mini-item">
+            <strong>3. Параллельный перенос (На какую плоскость?)</strong>
+            Если секущая плоскость пересекает две параллельные грани, то линии пересечения параллельны!
+          </div>
+          <div class="rule-mini-item">
+            <strong>4. Скрещивающиеся прямые</strong>
+            Две прямые из разных (непересекающихся по ним) плоскостей не пересекаются, даже если на плоском рисунке их проекции скрестились!
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="js/math3d.js"></script>
+  <script src="js/solids.js"></script>
+  <script src="js/constructionEngine.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/renderer3d.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

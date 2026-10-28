@@ -1,0 +1,839 @@
+/* ============================================================================
+   styles.css — Стили приложения «Стереометрия 3D: Конструктор сечений»
+   ============================================================================ */
+
+:root {
+  --bg-app: #f1f5f9;
+  --bg-panel: #ffffff;
+  --bg-subtle: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --danger: #e11d48;
+  --success: #059669;
+  --warning: #d97706;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+body.dark-theme {
+  --bg-app: #090d16;
+  --bg-panel: #111827;
+  --bg-subtle: #1e293b;
+  --border-color: #334155;
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-soft: rgba(59, 130, 246, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+/* ============================================================================
+   Верхняя панель (Header)
+   ============================================================================ */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  z-index: 20;
+  flex-wrap: wrap;
+}
+
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb, #e11d48);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mode-tabs {
+  display: flex;
+  background: var(--bg-subtle);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  gap: 3px;
+}
+
+.mode-tab-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mode-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.mode-tab-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.3);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn, .select-compact {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn:hover, .select-compact:hover {
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn.active-warn {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #f59e0b;
+}
+
+/* ============================================================================
+   Основная рабочая сетка (3 колонки)
+   ============================================================================ */
+.app-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr 315px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar {
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 10px;
+  gap: 10px;
+}
+
+.sidebar-left {
+  border-right: 1px solid var(--border-color);
+}
+
+.sidebar-right {
+  border-left: 1px solid var(--border-color);
+}
+
+.card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+  padding: 10px 11px;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-row label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  color: var(--text-main);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.slider-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.slider-inline span {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  min-width: 92px;
+}
+
+.slider-inline input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ============================================================================
+   Карточки точек M, N, K
+   ============================================================================ */
+.point-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 7px;
+}
+
+.point-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.point-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--accent);
+}
+
+.ratio-pill {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.pick-slot-btn {
+  padding: 2px 7px;
+  font-size: 11px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.pick-slot-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.quick-ratios {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.quick-ratio-btn {
+  flex: 1;
+  padding: 3px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.quick-ratio-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ============================================================================
+   Центральная 3D-область и панель пошагового объяснения / тренажёра
+   ============================================================================ */
+.viewport-center {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+.viewport-top-bar {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cam-presets-group {
+  display: flex;
+  gap: 5px;
+  pointer-events: auto;
+  background: var(--bg-panel);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.cam-preset-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cam-preset-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.mouse-hint-pill {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.canvas-3d-wrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 260px;
+  position: relative;
+}
+
+#canvas3d {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Нижняя панель шагов и правил */
+.bottom-control-panel {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-color);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+  z-index: 12;
+}
+
+.step-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.step-nav-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.step-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.badge-counter {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.badge-category {
+  color: #ffffff;
+  background: #2563eb;
+}
+
+.step-content-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 7px;
+  padding: 8px 12px;
+}
+
+.step-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+
+.step-explanation {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+.step-rule-formula {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+/* Панель инструментов Тренажёра */
+.trainer-tools-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trainer-tool-group {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.trainer-tool-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trainer-tool-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.trainer-feedback {
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.feedback-info {
+  background: var(--accent-soft);
+  color: var(--text-main);
+  border-left: 4px solid var(--accent);
+}
+
+.feedback-success {
+  background: rgba(16, 185, 129, 0.14);
+  color: var(--text-main);
+  border-left: 4px solid var(--success);
+}
+
+.feedback-error {
+  background: rgba(225, 29, 72, 0.14);
+  color: var(--text-main);
+  border-left: 4px solid var(--danger);
+}
+
+.feedback-warning {
+  background: rgba(245, 158, 11, 0.16);
+  color: var(--text-main);
+  border-left: 4px solid var(--warning);
+}
+
+/* ============================================================================
+   Правая панель: 2D натуральная величина, метрики и список шагов
+   ============================================================================ */
+.canvas-2d-wrapper {
+  width: 100%;
+  height: 205px;
+  border-radius: 7px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+#canvas2d {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.metric-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.metric-box.full {
+  grid-column: span 2;
+}
+
+.metric-label {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.metric-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.timeline-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.timeline-step-item:hover {
+  border-color: var(--accent);
+}
+
+.timeline-step-item.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.timeline-step-item.active .step-num {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.step-item-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.step-item-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.rules-cheatsheet {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rule-mini-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.rule-mini-item strong {
+  color: var(--text-main);
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ============================================================================
+   Чипсы продления плоскостей граней и панель выбора грани параллельного переноса
+   ============================================================================ */
+.face-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.face-chip-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.14s;
+}
+
+.face-chip-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.face-chip-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.face-chip-btn.clear {
+  background: rgba(225, 29, 72, 0.1);
+  color: var(--danger);
+  border-color: rgba(225, 29, 72, 0.3);
+}
+
+.parallel-face-picker-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1.5px solid #8b5cf6;
+  border-radius: 8px;
+  padding: 8px 11px;
+}
+
+.picker-title {
+  font-size: 12px;
+  color: var(--text-main);
+}
+
+.picker-btns-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.face-pick-target-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #8b5cf6;
+  background: var(--bg-panel);
+  color: #7c3aed;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+body.dark-theme .face-pick-target-btn {
+  color: #c4b5fd;
+}
+
+.face-pick-target-btn:hover {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.btn-cancel-esc {
+  background: rgba(225, 29, 72, 0.12);
+  color: var(--danger);
+  border-color: rgba(225, 29, 72, 0.35);
+}
+
+.btn-cancel-esc:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+/* Вкладки 2D-окна (Само сечение vs Вынос грани) */
+.tabs-2d-bar {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-panel);
+  padding: 3px;
+  border-radius: 7px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 7px;
+}
+
+.tab-2d-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tab-2d-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.marker-color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.marker-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.marker-color-swatch.active {
+  border-color: var(--text-main);
+  box-shadow: 0 0 0 2px var(--bg-panel);
+}
+
+body.wide-viewport .sidebar {
+  display: none !important;
+}
+
+body.wide-viewport .app-workspace {
+  grid-template-columns: 1fr !important;
+}
+
+@media (max-width: 1150px) {
+  .app-workspace {
+    grid-template-columns: 280px 1fr 270px;
+  }
+}
